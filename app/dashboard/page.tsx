@@ -6,6 +6,7 @@ import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement
 import { Line } from "react-chartjs-2";
 import { useSession } from "next-auth/react";
 import { TrendingDown, Leaf, Target, Award } from "lucide-react";
+import { getChallenges, getUserRanking } from "@/lib/challenge-api";
 import Protected from "@/components/Protected";
 import RecentActivities from "@/components/RecentActivities";
 
@@ -19,12 +20,54 @@ export default function Dashboard() {
   const { data: emissions } = useQuery({
     queryKey: ["emissions"],
     queryFn: async () => {
-      const res = await fetch(`${API_URL}/api/reports`, {
+      if (!session?.user?.email) {
+        throw new Error("User email not available");
+      }
+      const res = await fetch(`${API_URL}/api/reports?email=${encodeURIComponent(session.user.email)}`, {
         headers: { Authorization: `Bearer ${session?.accessToken}` },
       });
+      if (!res.ok) {
+        throw new Error(`Failed to fetch reports: ${res.status}`);
+      }
       return res.json();
     },
-    enabled: !!session,
+    enabled: !!session?.user?.email,
+  });
+
+  // Fetch user profile for points and total CO2 saved
+  const { data: profile } = useQuery({
+    queryKey: ["profile", session?.user?.email],
+    queryFn: async () => {
+      const res = await fetch(`${API_URL}/api/profile?email=${encodeURIComponent(session!.user!.email!)}`, {
+        headers: { Authorization: `Bearer ${session?.accessToken}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch profile");
+      return res.json();
+    },
+    enabled: !!session?.user?.email,
+  });
+
+  // Determine current challenge and rank for this user
+  const { data: currentRank } = useQuery({
+    queryKey: ["current-rank", session?.user?.email],
+    queryFn: async () => {
+      // get all challenges
+      const challenges = await getChallenges(session!.accessToken!);
+      const email = session!.user!.email!;
+      // try to find first challenge where ranking exists
+      for (const ch of challenges) {
+        try {
+          const rank = await getUserRanking(email, ch.id, session!.accessToken!);
+          if (typeof rank === "number") {
+            return { rank, challengeName: ch.name };
+          }
+        } catch (e) {
+          // ignore challenges where user is not ranked
+        }
+      }
+      return null;
+    },
+    enabled: !!session?.accessToken && !!session?.user?.email,
   });
 
   const chartData = {
@@ -111,9 +154,9 @@ export default function Dashboard() {
               <div className="text-xs text-muted-foreground">This Week</div>
             </div>
             <div className="text-lg font-semibold text-card-foreground mt-1">
-              {emissions?.total || 15.8} kg
+              {emissions?.total?.toFixed ? emissions.total.toFixed(1) : (emissions?.total || 0)} kg
             </div>
-            <div className="text-xs text-emerald-600">-12% from last week</div>
+            <div className="text-xs text-muted-foreground">Weekly total</div>
           </CardContent>
         </Card>
 
@@ -121,10 +164,10 @@ export default function Dashboard() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <Leaf className="h-4 w-4 text-emerald-600" />
-              <div className="text-xs text-muted-foreground">Saved</div>
+              <div className="text-xs text-muted-foreground">Points</div>
             </div>
-            <div className="text-lg font-semibold text-card-foreground mt-1">2.1 kg</div>
-            <div className="text-xs text-muted-foreground">CO2 this month</div>
+            <div className="text-lg font-semibold text-card-foreground mt-1">{profile?.points || 0}</div>
+            <div className="text-xs text-muted-foreground">Total points</div>
           </CardContent>
         </Card>
 
@@ -132,10 +175,10 @@ export default function Dashboard() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <Target className="h-4 w-4 text-emerald-600" />
-              <div className="text-xs text-muted-foreground">Goal</div>
+              <div className="text-xs text-muted-foreground">Emitted</div>
             </div>
-            <div className="text-lg font-semibold text-card-foreground mt-1">78%</div>
-            <div className="text-xs text-emerald-600">On track</div>
+            <div className="text-lg font-semibold text-card-foreground mt-1">{profile?.co2Saved?.toFixed ? profile.co2Saved.toFixed(1) : (profile?.co2Saved || 0)} kg</div>
+            <div className="text-xs text-muted-foreground">Total CO₂ emitted</div>
           </CardContent>
         </Card>
 
@@ -145,8 +188,12 @@ export default function Dashboard() {
               <Award className="h-4 w-4 text-emerald-600" />
               <div className="text-xs text-muted-foreground">Rank</div>
             </div>
-            <div className="text-lg font-semibold text-card-foreground mt-1">#24</div>
-            <div className="text-xs text-muted-foreground">This month</div>
+            <div className="text-lg font-semibold text-card-foreground mt-1">
+              {currentRank ? `#${currentRank.rank}` : "—"}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              {currentRank ? `in ${currentRank.challengeName}` : "No active challenge"}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -169,7 +216,7 @@ export default function Dashboard() {
         
         {/* Recent Activities - Takes 1/3 width on larger screens */}
         <div className="md:col-span-1">
-          <RecentActivities limit={5} />
+          <RecentActivities limit={5} size="small" />
         </div>
       </div>
 

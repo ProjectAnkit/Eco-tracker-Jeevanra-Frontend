@@ -75,21 +75,49 @@ const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, account }) {
       // Initial sign in
       if (account && user) {
+        // Decode the JWT to extract the user ID (browser-compatible)
+        let tokenPayload = null;
+        if ((user as any).accessToken) {
+          try {
+            const base64Url = (user as any).accessToken.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(
+              atob(base64)
+                .split('')
+                .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                .join('')
+            );
+            tokenPayload = JSON.parse(jsonPayload);
+          } catch (e) {
+            console.error('Error decoding token:', e);
+          }
+        }
+        
         return {
           ...token,
           accessToken: (user as any).accessToken,
-          id: user.id,
-          email: user.email,
+          id: tokenPayload?.sub || tokenPayload?.userId || user.id,
+          email: tokenPayload?.email || user.email,
+          name: tokenPayload?.name || user.name,
         };
       }
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        session.accessToken = token.accessToken as string;
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.name = token.name as string;
+        // Ensure we're using the correct user ID from the token
+        const userId = token.sub || token.id;
+        
+        return {
+          ...session,
+          user: {
+            ...session.user,
+            id: userId as string,
+            email: (token.email || token.sub) as string, // Use sub as email if email is not present
+            name: token.name as string,
+          },
+          accessToken: token.accessToken as string,
+        };
       }
       return session;
     },

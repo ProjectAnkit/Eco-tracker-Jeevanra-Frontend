@@ -111,7 +111,7 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
       <DialogTrigger asChild>
         {children || (
           <Button variant="outline" className="group flex items-center gap-1.5 text-xs">
-            Join us
+            Get Started
             <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
           </Button>
         )}

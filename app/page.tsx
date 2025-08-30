@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import AuthForm from "@/components/authForm";
 import { motion } from "framer-motion";
 import { Leaf, Globe, Trophy, ArrowRight, Sparkles, BarChart, Users, Award } from "lucide-react";
@@ -29,6 +32,22 @@ const features = [
 ];
 
 export default function Home() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.push('/dashboard');
+    }
+  }, [status, router]);
+
+  if (status === 'loading' || status === 'authenticated') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-900">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-cyan-50 dark:from-slate-900 dark:via-emerald-900/30 dark:to-cyan-900/20 relative overflow-hidden">
       {/* Background Elements */}
@@ -89,7 +108,7 @@ export default function Home() {
             >
              <AuthForm />
             </Button>
-            <Button className="bg-transparent hover:text-green-500 hover:bg-transparent text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200">
+            <Button className="bg-transparent hover:text-green-500 hover:bg-transparent text-grey font-medium py-2 px-4 rounded-lg transition-colors duration-200">
             <Link href="/learn-more">
             Learn More
             </Link>

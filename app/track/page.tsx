@@ -7,9 +7,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+// removed unused react-query imports for a cleaner file
 import { motion } from "framer-motion";
 import { Car, Bike, Bus, Train, Plane, Zap, Utensils, Clock } from "lucide-react";
+import { toastSuccess, toastError } from "@/lib/toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
 
@@ -34,85 +35,99 @@ const categoryIcons = {
 export default function Track() {
   const [type, setType] = useState("commute_car");
   const [units, setUnits] = useState("");
-  const { data: session } = useSession();
+  const { data: session, status } = useSession({
+    required: true,
+    onUnauthenticated() {},
+  });
+
+  // Add a loading state while session is being fetched
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600"></div>
+      </div>
+    );
+  }
+
+  
 
   const selectedType = activityTypes.find((t) => t.id === type);
 
-  const mutation = useMutation({
-    mutationFn: async () => {
-      if (!units || isNaN(parseFloat(units)) || parseFloat(units) <= 0) {
-        throw new Error("Please enter a valid positive number for units");
-      }
-      try {
-        console.log('Sending request to:', `${API_URL}/api/track`);
-        console.log('With token:', session?.accessToken ? 'Token exists' : 'No token');
-        
-        const res = await fetch(`${API_URL}/api/track`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${session?.accessToken}`,
-          },
-          body: JSON.stringify({ 
-            type, 
-            units: parseFloat(units) 
-          }),
-        });
-        
-        const data = await res.json().catch(() => ({}));
-        
-        if (!res.ok) {
-          console.error('API Error Response:', data);
-          throw new Error(data.message || `Failed to track activity: ${res.status} ${res.statusText}`);
-        }
-        
-        return data;
-      } catch (error) {
-        console.error('Error in mutation:', error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      alert("Activity tracked successfully!");
-      setUnits("");
-      refetchRecentActivities();
-    },
-    onError: (error) => {
-      console.error('Mutation error:', error);
-      alert(`Error: ${error.message}`);
-    },
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: recentActivities, refetch: refetchRecentActivities } = useQuery({
-    queryKey: ["recentActivities"],
-    queryFn: async () => {
-      const res = await fetch(`${API_URL}/api/track/recent?limit=5`, {
-        headers: { Authorization: `Bearer ${session?.accessToken}` },
+  const trackActivity = async () => {
+    if (!units || isNaN(parseFloat(units)) || parseFloat(units) <= 0) {
+      setError("Please enter a valid positive number for units");
+      return;
+    }
+    
+    if (!session?.user?.id) {
+      setError("User session is not valid. Please sign in again.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      if (!session?.accessToken) {
+        throw new Error('No access token found in session');
+      }
+
+      const requestBody = { 
+        type, 
+        units: parseFloat(units),
+        email: session.user.email // Include the user's email in the request body
+      };
+      
+      const token = session.accessToken;
+      
+      // Make the API request with the token
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+      
+      const res = await fetch(`${API_URL}/api/track`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(requestBody),
       });
-      if (!res.ok) throw new Error("Failed to fetch recent activities");
-      return res.json();
-    },
-    enabled: !!session,
-  });
+      
+      const data = await res.json().catch(() => ({}));
+      
+      if (!res.ok) {
+        throw new Error(data.message || `Failed to track activity: ${res.status} ${res.statusText}`);
+      }
+      
+      toastSuccess("Activity tracked successfully!", { duration: 3000 });
+      setUnits("");
+    } catch (error: any) {
+      console.error('Error tracking activity:', error);
+      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to track activity';
+      setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 md:p-6 max-w-6xl">
+      <div className="container mx-auto p-4 md:p-5 max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="space-y-6"
+          className="space-y-5"
         >
-          <div className="space-y-1">
-            <h1 className="text-2xl font-bold tracking-tight">Track Activity</h1>
-            <p className="text-muted-foreground">
-              Log your daily activities to monitor your carbon footprint
-            </p>
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-semibold tracking-tight">Track Activity</h1>
+            <p className="text-sm text-muted-foreground">Log your daily eco footprint</p>
           </div>
           
           <Tabs defaultValue="commute" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 h-auto p-1 bg-muted">
+            <TabsList className="grid w-full grid-cols-4 h-10 p-1 bg-muted/60">
               {Object.entries({
                 commute: 'Commute',
                 travel: 'Travel',
@@ -122,7 +137,7 @@ export default function Track() {
                 <TabsTrigger 
                   key={key} 
                   value={key}
-                  className="py-2 text-sm data-[state=active]:shadow-sm"
+                  className="py-1.5 text-sm data-[state=active]:shadow-sm"
                 >
                   <span className="mr-2">{categoryIcons[key as keyof typeof categoryIcons] || <Car className="h-4 w-4" />}</span>
                   {label}
@@ -136,23 +151,23 @@ export default function Track() {
               home: 'home',
               food: 'food'
             }).map(([tab, category]) => (
-              <TabsContent key={tab} value={tab} className="mt-6">
-                <Card className="border-0 shadow-sm">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg">
+              <TabsContent key={tab} value={tab} className="mt-4">
+                <Card className="border shadow-sm">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-base font-semibold">
                       {category === 'commute' ? 'Transportation' : 
                        category === 'travel' ? 'Travel' : 
                        category === 'home' ? 'Home Energy' : 'Food & Diet'}
                     </CardTitle>
-                    <CardDescription>
-                      {category === 'commute' ? 'Track your daily commute emissions' :
-                       category === 'travel' ? 'Log your travel emissions' :
-                       category === 'home' ? 'Record your home energy usage' : 'Track your food-related emissions'}
+                    <CardDescription className="text-xs">
+                      {category === 'commute' ? 'Commute' :
+                       category === 'travel' ? 'Travel' :
+                       category === 'home' ? 'Home usage' : 'Food footprint'}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="pt-2">
                     <TooltipProvider>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-4">
                         {activityTypes
                           .filter(activity => activity.category === category)
                           .map((activity) => (
@@ -162,24 +177,24 @@ export default function Track() {
                                   whileHover={{ scale: 1.03 }}
                                   whileTap={{ scale: 0.98 }}
                                   onClick={() => setType(activity.id)}
-                                  className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                                  className={`p-3 rounded-md border cursor-pointer transition-all ${
                                     type === activity.id
                                       ? "border-primary bg-primary/5"
                                       : "border-border hover:border-primary/30"
                                   }`}
                                 >
-                                  <div className="flex flex-col items-center text-center space-y-2">
-                                    <div className={`p-2 rounded-lg ${
+                                  <div className="flex flex-col items-center text-center space-y-1.5">
+                                    <div className={`p-2 rounded-md ${
                                       type === activity.id 
                                         ? 'bg-primary/10 text-primary' 
                                         : 'bg-muted'
                                     }`}>
-                                      <activity.icon className="h-5 w-5" />
+                                      <activity.icon className="h-4 w-4" />
                                     </div>
-                                    <span className="text-sm font-medium">
+                                    <span className="text-xs font-medium">
                                       {activity.name}
                                     </span>
-                                    <span className="text-xs text-muted-foreground">
+                                    <span className="text-[10px] text-muted-foreground">
                                       ({activity.unit})
                                     </span>
                                   </div>
@@ -193,101 +208,58 @@ export default function Track() {
                       </div>
                     </TooltipProvider>
                     
-                    <div className="space-y-4 pt-2">
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium leading-none">
-                          {selectedType?.name} ({selectedType?.unit})
-                        </label>
-                        <Input
-                          placeholder={`Enter ${selectedType?.unit} (e.g., 10)`}
-                          value={units}
-                          onChange={(e) => setUnits(e.target.value)}
-                          className="h-11 text-base"
-                          type="number"
-                          min="0"
-                          step="0.1"
-                        />
+                    <div className="space-y-3 pt-2">
+                      {/* Form aligned to the right with details input */}
+                      <div className="flex flex-col md:flex-row md:items-end md:justify-end gap-2">
+                        <div className="w-full md:w-40">
+                          <label className="text-xs font-medium leading-none block mb-1">
+                            {selectedType?.name} ({selectedType?.unit})
+                          </label>
+                          <Input
+                            placeholder={`Enter ${selectedType?.unit} (e.g., 10)`}
+                            value={units}
+                            onChange={(e) => setUnits(e.target.value)}
+                            className="h-10 text-sm"
+                            type="number"
+                            min="0"
+                            step="0.1"
+                          />
+                        </div>
+                        <div className="w-full md:w-64">
+                          <label className="text-xs font-medium leading-none block mb-1">
+                            Details (optional)
+                          </label>
+                          <Input
+                            placeholder="Add a short note, e.g., office commute"
+                            className="h-10 text-sm"
+                          />
+                        </div>
+                        <div className="w-full md:w-auto">
+                          <Button
+                            onClick={trackActivity}
+                            className="w-full md:w-auto h-10 text-sm font-medium"
+                            disabled={isSubmitting || !units || parseFloat(units) <= 0}
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <Clock className="mr-2 h-4 w-4 animate-spin" />
+                                Tracking...
+                              </>
+                            ) : (
+                              'Track Activity'
+                            )}
+                          </Button>
+                        </div>
                       </div>
-                      
-                      <Button
-                        onClick={() => mutation.mutate()}
-                        className="w-full h-11 text-base font-medium"
-                        disabled={mutation.isPending || !units || parseFloat(units) <= 0}
-                      >
-                        {mutation.isPending ? (
-                          <>
-                            <Clock className="mr-2 h-4 w-4 animate-spin" />
-                            Tracking...
-                          </>
-                        ) : (
-                          'Track Activity'
-                        )}
-                      </Button>
+                      {error && (
+                        <p className="text-red-500 text-xs">{error}</p>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
               </TabsContent>
             ))}
           </Tabs>
-          
-          {recentActivities && recentActivities.length > 0 && (
-            <Card className="border-0 shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg">
-                  Recent Activities
-                </CardTitle>
-                <CardDescription>
-                  Your most recent tracked activities
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {recentActivities.map((activity: any, index: number) => {
-                    const activityType = activityTypes.find((t) => t.id === activity.type);
-                    const Icon = activityType?.icon || Clock;
-                    
-                    return (
-                      <motion.div
-                        key={activity.id || index}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.2, delay: index * 0.05 }}
-                        className="flex items-center justify-between p-3 rounded-lg border"
-                      >
-                        <div className="flex items-center space-x-3">
-                          <div className="p-2 rounded-lg bg-muted">
-                            <Icon className="h-5 w-5 text-muted-foreground" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium">
-                              {activityType?.name || activity.type}
-                            </p>
-                            <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                              <span>
-                                {JSON.parse(activity.details)?.units} {activityType?.unit}
-                              </span>
-                              <span>•</span>
-                              <span>
-                                {new Date(activity.timestamp).toLocaleDateString('en-US', {
-                                  month: 'short',
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-sm font-medium text-primary">
-                          {parseFloat(activity.emissionsKg).toFixed(2)} kg
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          )}
         </motion.div>
       </div>
     </div>
