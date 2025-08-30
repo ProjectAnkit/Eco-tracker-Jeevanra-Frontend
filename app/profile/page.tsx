@@ -274,22 +274,22 @@ export default function Profile() {
 
        
           {/* Main Content Area */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-3 space-y-5">
             {/* Personal Information Card */}
-            <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <Card className="bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm border border-slate-200/80 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all duration-200">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-cyan-500"></div>
-              <CardHeader className="pb-3 border-b border-slate-200/80 dark:border-slate-700/50">
-                <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white flex items-center">
-                  <User className="h-5 w-5 mr-2 text-emerald-500" />
+              <CardHeader className="pb-3 px-6 pt-5 border-b border-slate-200/80 dark:border-slate-700/50">
+                <CardTitle className="text-[15px] font-semibold text-slate-800 dark:text-white flex items-center">
+                  <User className="h-4 w-4 mr-2 text-emerald-500" />
                   Personal Information
                 </CardTitle>
               </CardHeader>
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <CardContent className="p-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Location */}
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="location" className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center">
-                      <MapPin className="h-3.5 w-3.5 mr-1.5 text-emerald-500" />
+                      <MapPin className="h-3.5 w-3.5 mr-1.5 text-emerald-500 flex-shrink-0" />
                       Location
                     </Label>
                     {isEditing ? (
@@ -298,30 +298,30 @@ export default function Profile() {
                         value={formData.location}
                         onChange={(e) => setFormData(prev => ({ ...prev, location: e.target.value }))}
                         placeholder="e.g., New York, NY"
-                        className="border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20"
+                        className="text-sm h-9 border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 hover:bg-white dark:hover:bg-slate-800/90 transition-colors"
                       />
                     ) : (
-                      <div className="p-3 text-sm bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/80 dark:border-slate-700/50">
-                        {profile?.location || <span className="text-slate-400 italic">No location set</span>}
+                      <div className="px-3 py-2 text-sm bg-white/70 dark:bg-slate-800/70 rounded-md border border-slate-200/80 dark:border-slate-700/50 min-h-[36px] flex items-center">
+                        {profile?.location || <span className="text-slate-400 dark:text-slate-500 italic">No location set</span>}
                       </div>
                     )}
                   </div>
 
                   {/* Email (Read-only) */}
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center">
-                      <Mail className="h-3.5 w-3.5 mr-1.5 text-emerald-500" />
+                      <Mail className="h-3.5 w-3.5 mr-1.5 text-emerald-500 flex-shrink-0" />
                       Email Address
                     </Label>
-                    <div className="p-3 text-sm bg-slate-50/50 dark:bg-slate-800/30 rounded-lg border border-slate-200/80 dark:border-slate-700/50 text-slate-700 dark:text-slate-300">
+                    <div className="px-3 py-2 text-sm bg-slate-50/70 dark:bg-slate-800/50 rounded-md border border-slate-200/80 dark:border-slate-700/50 text-slate-700 dark:text-slate-300 min-h-[36px] flex items-center">
                       {session.user?.email}
                     </div>
                   </div>
 
                   {/* Bio (Full width) */}
-                  <div className="space-y-2 md:col-span-2">
+                  <div className="space-y-1.5 md:col-span-2">
                     <Label htmlFor="bio" className="text-xs font-medium text-slate-500 dark:text-slate-400 flex items-center">
-                      <Edit3 className="h-3.5 w-3.5 mr-1.5 text-emerald-500" />
+                      <Edit3 className="h-3.5 w-3.5 mr-1.5 text-emerald-500 flex-shrink-0" />
                       About You
                     </Label>
                     {isEditing ? (
@@ -331,11 +331,11 @@ export default function Profile() {
                         onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
                         placeholder="Tell us about yourself and your eco-goals..."
                         rows={4}
-                        className="border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-800/50 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 resize-none"
+                        className="text-sm border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/20 resize-none hover:bg-white dark:hover:bg-slate-800/90 transition-colors"
                       />
                     ) : (
-                      <div className="p-4 text-sm bg-white/50 dark:bg-slate-800/50 rounded-lg border border-slate-200/80 dark:border-slate-700/50 min-h-[120px]">
-                        {profile?.bio || <span className="text-slate-400 italic">No bio added yet. Share your story!</span>}
+                      <div className="p-3 text-sm bg-white/70 dark:bg-slate-800/70 rounded-md border border-slate-200/80 dark:border-slate-700/50 min-h-[120px]">
+                        {profile?.bio || <span className="text-slate-400 dark:text-slate-500 italic">No bio added yet. Share your story!</span>}
                       </div>
                     )}
                   </div>
