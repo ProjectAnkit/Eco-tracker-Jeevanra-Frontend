@@ -90,8 +90,8 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
         }
       }
     } catch (error) {
-      console.error("Error signing in:", error);
-      toastError("Failed to sign in ! Please try again.");
+      console.error("Error authenticating:", error);
+      toastError("Failed to authenticate ! Please try again.");
     } finally {
       setLoading(false);
     }
