@@ -6,12 +6,12 @@ import { ArrowLeft, Trophy, Crown, Medal, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { getLeaderboard, getUserRanking } from '@/lib/challenge-api';
-//
 import { useSession } from 'next-auth/react';
 
 export default function LeaderboardPage() {
   const { id } = useParams();
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [userRank, setUserRank] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -166,7 +166,7 @@ export default function LeaderboardPage() {
                         key={participant.id}
                         className={`flex flex-col items-center ${
                           podiumIndex === 1 ? '-mt-6' : ''
-                        }`}
+                        } ${isCurrentUser ? 'border-emerald-500 border-2' : ''} rounded-lg shadow-sm`}
                       >
                         <div className={`w-full bg-gradient-to-b ${
                           rank === 1 

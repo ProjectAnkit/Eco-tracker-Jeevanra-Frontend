@@ -21,6 +21,7 @@ export function ChallengeCard({ challenge, onUpdate }: ChallengeCardProps) {
   const { data: session } = useSession();
 
   const isParticipating = (challenge.participants || []).some(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (participant: any) => participant?.email === session?.user?.email
   );
 
@@ -85,6 +86,7 @@ export function ChallengeCard({ challenge, onUpdate }: ChallengeCardProps) {
               <span className="text-[11px] text-slate-500 dark:text-slate-400">Participants</span>
               <div className="flex items-center mt-0.5">
                 <div className="flex -space-x-1">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {challenge.participants?.slice(0, 3).map((participant: any) => (
                     <Avatar
                       key={participant.id}

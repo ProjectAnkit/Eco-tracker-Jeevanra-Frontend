@@ -6,8 +6,6 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/co
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
 import { Menu, User, Sun, Moon, LogOut, LogIn, UserPlus } from "lucide-react";
 import { toastSuccess, toastError } from "@/lib/toast";
 import { useEffect, useState } from "react";
@@ -18,7 +16,6 @@ export default function Navbar() {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const router = useRouter();
   const pathname = usePathname();
 
   const handleSignOut = async () => {

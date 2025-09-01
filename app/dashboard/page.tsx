@@ -9,6 +9,7 @@ import { TrendingDown, Leaf, Target, Award } from "lucide-react";
 import { getChallenges, getUserRanking } from "@/lib/challenge-api";
 import Protected from "@/components/Protected";
 import RecentActivities from "@/components/RecentActivities";
+import { toastError } from "@/lib/toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
 
@@ -61,8 +62,9 @@ export default function Dashboard() {
           if (typeof rank === "number") {
             return { rank, challengeName: ch.name };
           }
-        } catch (e) {
-          // ignore challenges where user is not ranked
+        } catch (error) {
+            console.error("Error getting user rank:", error);
+            toastError("Failed to get user rank");
         }
       }
       return null;

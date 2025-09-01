@@ -7,18 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { 
   User, 
   MapPin, 
   Edit3, 
-  Save, 
-  X, 
   Camera, 
-  Award, 
-  Leaf,
-  Calendar,
   Mail
 } from "lucide-react";
 
@@ -47,13 +42,7 @@ export default function Profile() {
     bio: ""
   });
 
-  useEffect(() => {
-    if (session?.user?.email) {
-      loadProfile();
-    }
-  }, [session]);
-
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       const res = await fetch(`${API_URL}/api/profile?email=${encodeURIComponent(session!.user!.email!)}`, {
         headers: {
@@ -75,7 +64,7 @@ export default function Profile() {
       console.error("Error loading profile:", error);
       toast.error("Failed to load profile");
     }
-  };
+  }, [session]);
 
   const handleUpdate = async () => {
     try {
@@ -115,6 +104,12 @@ export default function Profile() {
     });
     setIsEditing(false);
   };
+
+  useEffect(() => {
+    if (session?.user?.email) {
+      loadProfile();
+    }
+  }, [session, loadProfile]);
 
   if (!session) {
     return (

@@ -69,6 +69,7 @@ export const leaveChallenge = async (challengeId: number, email: string, token: 
   return response.json();
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getLeaderboard = async (challengeId: number, token: string): Promise<any> => {
   const response = await fetch(`${API_URL}/api/challenges/${challengeId}/leaderboard`, {
     headers: {

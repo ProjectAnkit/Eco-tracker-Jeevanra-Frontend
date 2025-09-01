@@ -1,10 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { motion } from "framer-motion";
-import { Leaf, Bike, Utensils, Zap, Clock, Calendar, User, ArrowRight } from "lucide-react";
+import { Leaf, Bike, Utensils, Zap } from "lucide-react";
 import Link from "next/link";
 
 const blogPosts = [

@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Plus, Award } from 'lucide-react';
+import { Search, Award } from 'lucide-react';
 import { ChallengeCard } from '../../components/ChallengeCard';
 import { CreateChallengeDialog } from '../../components/CreateChallengeDialog';
 import { Challenge } from '@/types/challenge';
@@ -18,11 +18,7 @@ export default function ChallengesPage() {
 
   const { data: session } = useSession();
 
-  useEffect(() => {
-    loadChallenges();
-  }, []);
-
-  const loadChallenges = async () => {
+  const loadChallenges = useCallback(async () => {
     try {
       setIsLoading(true);
       const data = await getChallenges(session?.accessToken || '');
@@ -34,7 +30,7 @@ export default function ChallengesPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [session?.accessToken]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +52,10 @@ export default function ChallengesPage() {
   const handleChallengeUpdated = (updatedChallenge: Challenge) => {
     setChallenges(challenges.map(c => c.id === updatedChallenge.id ? updatedChallenge : c));
   };
+
+  useEffect(() => {
+    loadChallenges();
+  }, [loadChallenges]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-cyan-50 dark:from-slate-900 dark:via-emerald-900/30 dark:to-cyan-900/20 py-12 px-4 sm:px-6 lg:px-8">

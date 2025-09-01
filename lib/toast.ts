@@ -16,6 +16,7 @@ const defaultOptions = {
 };
 
 // Function to show toast in the current tab
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const showInCurrentTab = (type: ToastType, message: string, options: any = {}) => {
   toast[type](message, {
     ...defaultOptions,
@@ -24,6 +25,7 @@ const showInCurrentTab = (type: ToastType, message: string, options: any = {}) =
 };
 
 // Export the main toast functions
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const showToast = (type: ToastType, message: string, options: any = {}) => {
   // Show in current tab
   showInCurrentTab(type, message, options);
@@ -40,11 +42,15 @@ if (typeof window !== 'undefined') {
 }
 
 // Helper functions
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toastSuccess = (message: string, options: any = {}) => 
   showToast('success', message, options);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toastError = (message: string, options: any = {}) => 
   showToast('error', message, options);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toastInfo = (message: string, options: any = {}) => 
   showToast('info', message, options);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const toastWarning = (message: string, options: any = {}) => 
   showToast('warning', message, options);

@@ -39,7 +39,8 @@ export const formatActivityDate = (dateString: string) => {
 
 interface ActivityDetails {
   units: number;
-  [key: string]: any; // Allow for additional properties
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 interface ActivityItem {

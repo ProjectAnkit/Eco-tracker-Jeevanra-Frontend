@@ -10,7 +10,7 @@ import { useSession } from "next-auth/react";
 // removed unused react-query imports for a cleaner file
 import { motion } from "framer-motion";
 import { Car, Bike, Bus, Train, Plane, Zap, Utensils, Clock } from "lucide-react";
-import { toastSuccess, toastError } from "@/lib/toast";
+import { toastSuccess } from "@/lib/toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
 
@@ -35,6 +35,9 @@ const categoryIcons = {
 export default function Track() {
   const [type, setType] = useState("commute_car");
   const [units, setUnits] = useState("");
+  const selectedType = activityTypes.find((t) => t.id === type);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {},
@@ -48,13 +51,6 @@ export default function Track() {
       </div>
     );
   }
-
-  
-
-  const selectedType = activityTypes.find((t) => t.id === type);
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const trackActivity = async () => {
     if (!units || isNaN(parseFloat(units)) || parseFloat(units) <= 0) {
@@ -103,10 +99,9 @@ export default function Track() {
       
       toastSuccess("Activity tracked successfully!", { duration: 3000 });
       setUnits("");
-    } catch (error: any) {
-      console.error('Error tracking activity:', error);
-      const errorMessage = error?.response?.data?.message || error?.message || 'Failed to track activity';
-      setError(errorMessage);
+    } catch (e) {
+      console.error('Error tracking activity:', e);
+      setError("Failed to track activity");
     } finally {
       setIsSubmitting(false);
     }

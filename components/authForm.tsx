@@ -89,15 +89,9 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
           return;
         }
       }
-    } catch (err: any) {
-      const errorMessage = err.message || "An error occurred. Please try again.";
-      const errorMap: { [key: string]: string } = {
-        "Invalid credentials": "Incorrect email or password.",
-        "Email already exists": "This email is already registered.",
-        "Registration failed": "Unable to create your account.",
-        "Login failed": "Unable to sign in. Please check credentials.",
-      };
-      toastError(errorMap[errorMessage] || "Something went wrong. Try again.");
+    } catch (error) {
+      console.error("Error signing in:", error);
+      toastError("Failed to sign in ! Please try again.");
     } finally {
       setLoading(false);
     }

@@ -10,7 +10,7 @@ interface ProtectedProps {
 }
 
 export default function Protected({ children, requiredRole }: ProtectedProps) {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
 
