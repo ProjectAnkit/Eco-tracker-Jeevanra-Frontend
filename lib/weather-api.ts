@@ -1,7 +1,7 @@
 import { toastError } from "./toast";
 
 const WEATHER_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY || '';
-const WEATHER_API_URL = 'http://api.weatherapi.com/v1/current.json';
+const WEATHER_API_URL = 'https://api.weatherapi.com/v1/current.json';
 
 export interface WeatherData {
   location: {
