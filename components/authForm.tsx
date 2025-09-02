@@ -197,11 +197,6 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
                       <label htmlFor="password" className="text-[8px] font-medium text-slate-700 dark:text-slate-300">
                         Password
                       </label>
-                      {!isRegister && (
-                        <a href="#" className="text-[8px] text-emerald-600 dark:text-emerald-400">
-                          Forgot?
-                        </a>
-                      )}
                     </div>
                     <div className="relative">
                       <Lock className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-400" />

@@ -108,8 +108,8 @@ export default function Track() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-4 md:p-5 max-w-5xl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-cyan-50 dark:from-slate-900 dark:via-emerald-900/30 dark:to-cyan-900/20 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -122,7 +122,7 @@ export default function Track() {
           </div>
           
           <Tabs defaultValue="commute" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 h-10 p-1 bg-muted/60">
+            <TabsList className="grid w-full grid-cols-4 h-15 p-1 bg-muted/60">
               {Object.entries({
                 commute: 'Commute',
                 travel: 'Travel',
@@ -132,10 +132,10 @@ export default function Track() {
                 <TabsTrigger 
                   key={key} 
                   value={key}
-                  className="py-1.5 text-sm data-[state=active]:shadow-sm"
+                  className="py-1.5 text-sm data-[state=active]:shadow-sm flex items-center justify-center"
                 >
-                  <span className="mr-2">{categoryIcons[key as keyof typeof categoryIcons] || <Car className="h-4 w-4" />}</span>
-                  {label}
+                  <span className="sm:mr-2">{categoryIcons[key as keyof typeof categoryIcons] || <Car className="h-4 w-4" />}</span>
+                  <span className="hidden sm:inline">{label}</span>
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -147,7 +147,7 @@ export default function Track() {
               food: 'food'
             }).map(([tab, category]) => (
               <TabsContent key={tab} value={tab} className="mt-4">
-                <Card className="border shadow-sm">
+                <Card className="border shadow-sm bg-muted/50 rounded-md">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-base font-semibold">
                       {category === 'commute' ? 'Transportation' : 
@@ -184,9 +184,9 @@ export default function Track() {
                                         ? 'bg-primary/10 text-primary' 
                                         : 'bg-muted'
                                     }`}>
-                                      <activity.icon className="h-4 w-4" />
+                                      <activity.icon className="h-10 w-10" />
                                     </div>
-                                    <span className="text-xs font-medium">
+                                    <span className="text-sm font-medium">
                                       {activity.name}
                                     </span>
                                     <span className="text-[10px] text-muted-foreground">
@@ -203,11 +203,11 @@ export default function Track() {
                       </div>
                     </TooltipProvider>
                     
-                    <div className="space-y-3 pt-2">
+                    <div className="space-y-3 pt-10">
                       {/* Form aligned to the right with details input */}
                       <div className="flex flex-col md:flex-row md:items-end md:justify-end gap-2">
                         <div className="w-full md:w-40">
-                          <label className="text-xs font-medium leading-none block mb-1">
+                          <label className="text-sm font-medium leading-none block mb-1">
                             {selectedType?.name} ({selectedType?.unit})
                           </label>
                           <Input

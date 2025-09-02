@@ -6,7 +6,8 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/co
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, User, Sun, Moon, LogOut, LogIn, UserPlus } from "lucide-react";
+import { Menu, User } from "lucide-react";
+import { ThemeToggle } from "./ui/ThemeToggle";
 import { toastSuccess, toastError } from "@/lib/toast";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
@@ -20,11 +21,11 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     try {
-      await signOut({ callbackUrl: '/' });
-      toastSuccess('Successfully signed out');
+      await signOut({ callbackUrl: "/" });
+      toastSuccess("Successfully signed out");
     } catch (error) {
-      console.error('Error signing out:', error);
-      toastError('Failed to sign out. Please try again.');
+      console.error("Error signing out:", error);
+      toastError("Failed to sign out. Please try again.");
     }
   };
 
@@ -34,13 +35,16 @@ export default function Navbar() {
 
   if (!mounted) {
     return (
-      <nav className="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50 px-4 py-2 shadow-sm">
+      <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border-b border-slate-200/50 dark:border-slate-800/50 px-6 py-4 shadow-sm transition-colors duration-300">
         <div className="container mx-auto flex justify-between items-center">
-          <Link href="/dashboard" className="text-3xl text-emerald-700 dark:text-white font-['Playfair_Display'] font-medium italic">
+          <Link
+            href="/"
+            className={`${theme === "dark" ? "text-white" : "text-slate-800"} text-3xl font-normal hover:opacity-80 transition-opacity font-sacramento`}
+          > 
             Jeevanra
           </Link>
-          <div className="hidden md:flex items-center space-x-4">
-            <div className="w-16 h-8 bg-slate-200 dark:bg-slate-700 rounded animate-pulse"></div>
+          <div className="hidden md:flex items-center space-x-6">
+            <div className="w-20 h-10 bg-slate-200 dark:bg-slate-800 rounded-xl animate-pulse"></div>
           </div>
         </div>
       </nav>
@@ -48,208 +52,276 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50 px-4 py-2 shadow-sm">
+    <nav className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border-b border-slate-200/50 dark:border-slate-800/50 px-6 py-4 shadow-sm transition-colors duration-300">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <Link href="/dashboard" className="text-3xl text-emerald-700 dark:text-white font-['Playfair_Display'] font-medium italic">
+        <Link
+          href="/dashboard"
+          className={`${theme === "dark" ? "text-white" : "text-slate-800"} text-3xl font-normal font-sacramento`}
+        >
           Jeevanra
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-3">
-          {!session ? (
-            <>
-              <AuthForm>
-                <Button variant="ghost" size="sm" className="text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-                <LogIn className="h-4 w-4 mr-2" />
-                Sign In
-              </Button>
-              </AuthForm>
-              <AuthForm defaultTab="signup">
-                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Sign Up
-                </Button>
-              </AuthForm>
-            </>
-          ) : session ? (
-            <>
-              <Link href="/dashboard" className={`text-sm font-medium px-3 py-2 rounded-lg transition-colors duration-200 ${pathname === '/dashboard' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20'}`}>
-                Dashboard
-              </Link>
-              <Link href="/track" className={`text-sm font-medium px-3 py-2 rounded-lg transition-colors duration-200 ${pathname === '/track' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20'}`}>
-                Track
-              </Link>
-              <Link href="/challenges" className={`text-sm font-medium px-3 py-2 rounded-lg transition-colors duration-200 ${pathname?.startsWith('/challenges') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/20 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20'}`}>
-                Challenges
-              </Link>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="p-2 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-              >
-                {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 px-3 py-2">
-                    <User className="h-4 w-4" />
-                    <span className="text-sm">{session.user?.email?.split("@")[0]}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg">
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile" className="w-full text-slate-700 dark:text-slate-200 hover:text-emerald-600">
-                      Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={handleSignOut} 
-                    className="cursor-pointer flex items-center gap-2 text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-900/30"
+        <div className="hidden md:flex items-center justify-end flex-1">
+          <div className="flex items-center space-x-6">
+            {!session ? (
+              <>
+                <AuthForm>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className={`${theme === 'dark' ? 'text-white' : 'text-black'} ${theme === 'dark' ? 'hover:bg-white/10' : 'hover:bg-black/10'} rounded-xl font-medium px-4 py-2 transition-all duration-200`}
                   >
-                    <LogOut className="w-4 h-4" />
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
+                    Sign In
+                  </Button>
+                </AuthForm>
+                <AuthForm defaultTab="signup">
+                  <Button
+                    size="sm"
+                    className={`${
+                      theme === "dark" ? "bg-white text-black" : "bg-black text-white"
+                    } hover:bg-${
+                      theme === "dark" ? "white/80" : "black/80"
+                    } rounded-xl font-medium px-5 py-2 transition-all duration-300 shadow-sm hover:shadow-md`}
+                  >
+                    Sign Up
+                  </Button>
+                </AuthForm>
+              </>
           ) : (
             <>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="p-2 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+              <Link
+                href="/dashboard"
+                className={`text-sm font-medium px-4 py-2 rounded-xl transition-all duration-300 ${
+                  pathname === "/dashboard"
+                    ? theme === "dark"
+                      ? "bg-white/10 text-white"
+                      : "bg-black/10 text-black"
+                    : theme === "dark"
+                    ? "text-white/80 hover:text-black hover:bg-white/90"
+                    : "text-black/80 hover:text-white hover:bg-black/90"
+                }`}
               >
-                {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </Button>
-              <Link href="/">
-                <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200">
-                  Sign In
-                </Button>
+                Dashboard
               </Link>
+              <Link
+                href="/track"
+                className={`text-sm font-medium px-4 py-2 rounded-xl transition-all duration-300 ${
+                  pathname === "/track"
+                    ? theme === "dark"
+                      ? "bg-white/10 text-white"
+                      : "bg-black/10 text-black"
+                    : theme === "dark"
+                    ? "text-white/80 hover:text-black hover:bg-white/90"
+                    : "text-black/80 hover:text-white hover:bg-black/90"
+                }`}
+              >
+                Track
+              </Link>
+              <Link
+                href="/challenges"
+                className={`text-sm font-medium px-4 py-2 rounded-xl transition-all duration-300 ${
+                  pathname?.startsWith("/challenges")
+                    ? theme === "dark"
+                      ? "bg-white/10 text-white"
+                      : "bg-black/10 text-black"
+                    : theme === "dark"
+                    ? "text-white/80 hover:text-black hover:bg-white/90"
+                    : "text-black/80 hover:text-white hover:bg-black/90"
+                }`}
+              >
+                Challenges
+              </Link>
+              <ThemeToggle />
+              {session && (
+                <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={`flex items-center gap-2 ${
+                    theme === "dark"
+                      ? "text-white/80 hover:text-black hover:bg-white/90"
+                      : "text-black/80 hover:text-white hover:bg-black/90"
+                  } px-4 py-2 rounded-xl transition-all duration-300`}
+                >
+                  <User className="h-4 w-4" />
+                  <span className="text-sm font-medium">{session?.user?.email?.split("@")[0]}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className={`${
+                  theme === "dark" ? "bg-slate border-slate-900" : "bg-white/95 border-black/10"
+                } shadow-lg rounded-xl p-2 backdrop-blur-sm`}
+              >
+                <DropdownMenuItem asChild>
+                  <Link
+                    href="/profile"
+                    className={`w-full ${
+                      theme === "dark"
+                        ? "text-white/80 hover:text-black hover:bg-white/90"
+                        : "text-black/80 hover:text-white hover:bg-black/90"
+                    } rounded-lg px-3 py-2`}
+                  >
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={handleSignOut}
+                  className="cursor-pointer flex items-center gap-2 text-red-500 hover:bg-red-500/10 rounded-lg px-3 py-2"
+                >
+                  Sign out
+                </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              )}
             </>
           )}
+          </div>
         </div>
 
         {/* Mobile Navigation */}
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-                <Menu className="h-5 w-5" />
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`${theme === "dark" ? "text-white" : "text-black"}/80 hover:bg-white/5 rounded-xl transition-all duration-200`}
+              >
+                <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[280px] sm:w-[350px] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-700">
-              <SheetHeader>
-                <SheetTitle className="text-left text-lg font-semibold text-slate-900 dark:text-white">
-                  {session ? 'Menu' : 'Welcome'}
+            <SheetContent
+              side="right"
+              className={`w-[320px] p-6 ${
+                theme === 'dark' 
+                  ? 'bg-slate border-l border-black' 
+                  : 'bg-white border-l border-black/10'
+              } backdrop-blur-sm`}
+            >
+              <SheetHeader className="pb-6">
+                <SheetTitle
+                  className={`text-left text-xl font-semibold ${
+                    theme === "dark" ? "text-white" : "text-black"
+                  }`}
+                >
+                  {session ? "Menu" : "Welcome"}
                 </SheetTitle>
               </SheetHeader>
-              <nav className="mt-6 space-y-1">
+              <nav className="space-y-2">
+                {session && (
+                  <div className="px-4 py-3">
+                    <ThemeToggle />
+                  </div>
+                )}
                 {!session && (
                   <>
                     <AuthForm>
-                      <Button variant="ghost" className="w-full justify-start text-slate-700 dark:text-slate-200 hover:bg-emerald-50 dark:hover:bg-emerald-900/20">
-                        <LogIn className="mr-2 h-4 w-4" />
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start px-4 py-3 ${
+                          theme === "dark"
+                            ? "text-white/80 hover:text-black hover:bg-white/90"
+                            : "text-black/80 hover:text-white hover:bg-black/90"
+                        } rounded-xl font-medium transition-all duration-300`}
+                      >
                         Sign In
                       </Button>
                     </AuthForm>
                     <AuthForm defaultTab="signup">
-                      <Button className="w-full justify-start bg-emerald-600 hover:bg-emerald-700 text-white mt-2">
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        Sign Up
+                      <Button
+                        variant="ghost"
+                        className={`w-full justify-start px-4 py-3 ${
+                          theme === "dark"
+                            ? "text-white/80 hover:text-black hover:bg-white/90"
+                            : "text-black/80 hover:text-white hover:bg-black/90"
+                        } rounded-xl font-medium transition-all duration-300`}
+                      >
+                        Create Account
                       </Button>
                     </AuthForm>
-                    <div className="border-t border-slate-200 dark:border-slate-700 my-3"></div>
                   </>
                 )}
-                {session ? (
+                {session && (
                   <>
-                    <div className="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg mb-4">
-                      <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-800 rounded-full flex items-center justify-center">
-                        <User className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                    <div
+                      className={`flex items-center gap-4 p-4 ${
+                        theme === "dark" ? "bg-white/5" : "bg-black/5"
+                      } rounded-xl`}
+                    >
+                      <div
+                        className={`w-12 h-12 ${
+                          theme === "dark" ? "bg-black/50" : "bg-white/50"
+                        } rounded-full flex items-center justify-center shadow-sm`}
+                      >
+                        <User
+                          className={`h-6 w-6 ${theme === "dark" ? "text-white/80" : "text-black/80"}`}
+                        />
                       </div>
                       <div>
-                        <div className="text-sm font-medium text-slate-800 dark:text-slate-200">
+                        <div
+                          className={`text-sm font-semibold ${
+                            theme === "dark" ? "text-white" : "text-black"
+                          }`}
+                        >
                           {session.user?.email?.split("@")[0]}
                         </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400">Eco Warrior</div>
+                        <div
+                          className={`text-xs ${theme === "dark" ? "text-white/60" : "text-black/60"}`}
+                        >
+                          Member
+                        </div>
                       </div>
                     </div>
-                    
-                    <Link href="/dashboard" className="flex items-center gap-3 p-3 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all duration-200">
-                      <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                        📊
-                      </div>
-                      <span className="font-medium">Dashboard</span>
+                    <Link
+                      href="/dashboard"
+                      className={`flex items-center justify-between px-4 py-3 ${
+                        theme === "dark"
+                          ? "text-white/80 hover:text-black hover:bg-white/90"
+                          : "text-black/80 hover:text-white hover:bg-black/90"
+                      } rounded-xl font-medium transition-all duration-300`}
+                    >
+                      Dashboard
                     </Link>
-                    
-                    <Link href="/track" className="flex items-center gap-3 p-3 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all duration-200">
-                      <div className="w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                        🌱
-                      </div>
-                      <span className="font-medium">Track Activity</span>
+                    <Link
+                      href="/track"
+                      className={`flex items-center justify-between px-4 py-3 ${
+                        theme === "dark"
+                          ? "text-white/80 hover:text-black hover:bg-white/90"
+                          : "text-black/80 hover:text-white hover:bg-black/90"
+                      } rounded-xl font-medium transition-all duration-300`}
+                    >
+                      Track Activity
                     </Link>
-                    
-                    <Link href="/challenges" className="flex items-center gap-3 p-3 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all duration-200">
-                      <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
-                        🏆
-                      </div>
-                      <span className="font-medium">Challenges</span>
+                    <Link
+                      href="/challenges"
+                      className={`flex items-center justify-between px-4 py-3 ${
+                        theme === "dark"
+                          ? "text-white/80 hover:text-black hover:bg-white/90"
+                          : "text-black/80 hover:text-white hover:bg-black/90"
+                      } rounded-xl font-medium transition-all duration-300`}
+                    >
+                      Challenges
                     </Link>
-                    
-                    <Link href="/profile" className="flex items-center gap-3 p-3 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all duration-200">
-                      <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
-                        👤
-                      </div>
-                      <span className="font-medium">Profile</span>
+                    <Link
+                      href="/profile"
+                      className={`flex items-center justify-between px-4 py-3 ${
+                        theme === "dark"
+                          ? "text-white/80 hover:text-black hover:bg-white/90"
+                          : "text-black/80 hover:text-white hover:bg-black/90"
+                      } rounded-xl font-medium transition-all duration-300`}
+                    >
+                      Profile
                     </Link>
-
-                    <div className="border-t border-slate-200 dark:border-slate-700 pt-4 mt-4">
-                      <Button
-                        variant="ghost"
-                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                        className="w-full justify-start gap-3 p-3 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
-                      >
-                        <div className="w-8 h-8 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
-                          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                        </div>
-                        <span className="font-medium">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
-                      </Button>
-                      
-                      <Button
-                        variant="ghost"
-                        onClick={() => signOut({ callbackUrl: "/" })}
-                        className="w-full justify-start gap-3 p-3 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 mt-2"
-                      >
-                        <div className="w-8 h-8 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
-                          🚪
-                        </div>
-                        <span className="font-medium">Sign Out</span>
-                      </Button>
-                    </div>
-                  </>
-                ) : (
-                  <>
                     <Button
                       variant="ghost"
-                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                      className="w-full justify-start gap-3 p-3 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                      onClick={handleSignOut}
+                      className="w-full justify-between px-4 py-3 text-red-500 hover:bg-red-500/10 rounded-xl font-medium transition-all duration-300"
                     >
-                      <div className="w-8 h-8 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center">
-                        {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                      </div>
-                      <span className="font-medium">{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+                      Sign Out
                     </Button>
-                    
-                    <Link href="/" className="flex items-center gap-3 p-3 text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 rounded-lg transition-all duration-200">
-                      <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
-                        🔑
-                      </div>
-                      <span className="font-medium">Sign In</span>
-                    </Link>
                   </>
                 )}
               </nav>

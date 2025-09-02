@@ -9,6 +9,7 @@ import { TrendingDown, Leaf, Target, Award } from "lucide-react";
 import { getChallenges, getUserRanking } from "@/lib/challenge-api";
 import Protected from "@/components/Protected";
 import RecentActivities from "@/components/RecentActivities";
+import WeatherSuggestion from "@/components/WeatherSuggestion";
 import { toastError } from "@/lib/toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
@@ -141,87 +142,98 @@ export default function Dashboard() {
 
   return (
     <Protected>
-    <div className="p-4 space-y-4 max-w-6xl mx-auto">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-foreground">Dashboard</h1>
-        <div className="text-sm text-muted-foreground">Welcome back, {session?.user?.email?.split("@")[0]}</div>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Card className="bg-card border shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-emerald-600" />
-              <div className="text-xs text-muted-foreground">This Week</div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-cyan-50 dark:from-slate-900 dark:via-emerald-900/30 dark:to-cyan-900/20 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Weather Suggestion */}
+          <WeatherSuggestion />
+          
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-full bg-emerald-50 dark:bg-emerald-900/30">
+                <TrendingDown className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div className="text-sm font-medium text-muted-foreground">This Week</div>
             </div>
-            <div className="text-lg font-semibold text-card-foreground mt-1">
+            <div className="text-2xl font-bold text-slate-900 dark:text-white">
               {emissions?.total?.toFixed ? emissions.total.toFixed(1) : (emissions?.total || 0)} kg
             </div>
-            <div className="text-xs text-muted-foreground">Weekly total</div>
+            <div className="text-sm text-muted-foreground mt-1">Weekly total</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <Leaf className="h-4 w-4 text-emerald-600" />
-              <div className="text-xs text-muted-foreground">Points</div>
+        <Card className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-full bg-emerald-50 dark:bg-emerald-900/30">
+                <Leaf className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div className="text-sm font-medium text-muted-foreground">Points</div>
             </div>
-            <div className="text-lg font-semibold text-card-foreground mt-1">{profile?.points || 0}</div>
-            <div className="text-xs text-muted-foreground">Total points</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-white">{profile?.points || 0}</div>
+            <div className="text-sm text-muted-foreground mt-1">Total points</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <Target className="h-4 w-4 text-emerald-600" />
-              <div className="text-xs text-muted-foreground">Emitted</div>
+        <Card className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-full bg-emerald-50 dark:bg-emerald-900/30">
+                <Target className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div className="text-sm font-medium text-muted-foreground">Emitted</div>
             </div>
-            <div className="text-lg font-semibold text-card-foreground mt-1">{profile?.co2Saved?.toFixed ? profile.co2Saved.toFixed(1) : (profile?.co2Saved || 0)} kg</div>
-            <div className="text-xs text-muted-foreground">Total CO₂ emitted</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-white">
+              {profile?.co2Saved?.toFixed ? profile.co2Saved.toFixed(1) : (profile?.co2Saved || 0)} kg
+            </div>
+            <div className="text-sm text-muted-foreground mt-1">Total CO₂ emitted</div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-2">
-              <Award className="h-4 w-4 text-emerald-600" />
-              <div className="text-xs text-muted-foreground">Rank</div>
+        <Card className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="p-2 rounded-full bg-emerald-50 dark:bg-emerald-900/30">
+                <Award className="h-5 w-5 text-emerald-600" />
+              </div>
+              <div className="text-sm font-medium text-muted-foreground">Rank</div>
             </div>
-            <div className="text-lg font-semibold text-card-foreground mt-1">
-              {currentRank ? `#${currentRank.rank}` : "—"}
+            <div className="text-2xl font-bold text-slate-900 dark:text-white">
+              {currentRank ? `#${currentRank.rank}` : '—'}
             </div>
-            <div className="text-xs text-muted-foreground">
-              {currentRank ? `in ${currentRank.challengeName}` : "No active challenge"}
+            <div className="text-sm text-muted-foreground mt-1">
+              {currentRank ? `in ${currentRank.challengeName}` : 'No active challenge'}
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Chart and Recent Activities */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Weekly Emissions Chart - Takes 2/3 width on larger screens */}
-        <div className="md:col-span-2">
-          <Card className="bg-card border shadow-sm h-full">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg font-medium text-card-foreground">Weekly Emissions</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="h-64">
-                <Line data={chartData} options={chartOptions} />
-              </div>
+        <Card className="lg:col-span-2 w-full bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+          <CardHeader className="pb-3 px-6 pt-6">
+            <CardTitle className="text-lg font-semibold text-slate-900 dark:text-white">Weekly Emissions</CardTitle>
+          </CardHeader>
+          <CardContent className="px-6 pb-6 pt-0">
+            <div className="h-80 w-full">
+              <Line data={chartData} options={chartOptions} />
+            </div>
+          </CardContent>
+        </Card>
+        
+        {/* Recent Activities - Takes 1/3 width on larger screens */}
+        <div className="w-full">
+          <Card className="h-full bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <CardContent className="px-6 pb-6 pt-0">
+              <RecentActivities limit={5} size="small" />
             </CardContent>
           </Card>
         </div>
-        
-        {/* Recent Activities - Takes 1/3 width on larger screens */}
-        <div className="md:col-span-1">
-          <RecentActivities limit={5} size="small" />
+          </div>
         </div>
-      </div>
-
       </div>
     </Protected>
   );

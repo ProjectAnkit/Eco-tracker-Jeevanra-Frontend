@@ -98,7 +98,7 @@ export function ActivityList({
         )}
         {[...Array(limit)].map((_, i) => (
           <div key={i} className="flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700">
-            <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-600 animate-pulse"></div>
+            <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gray-200 dark:bg-gray-600 animate-pulse"></div>
             <div className="flex-1 space-y-2">
               <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-600 rounded animate-pulse"></div>
               <div className="h-3 w-1/2 bg-gray-100 dark:bg-gray-700 rounded animate-pulse"></div>
@@ -143,8 +143,8 @@ export function ActivityList({
         {displayedActivities.map((activity) => {
           const details = parseActivityDetails(activity.details);
           return (
-            <div key={activity.id} className="flex items-start gap-3 p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700">
-              <div className={`${isSmall ? 'p-1' : 'p-2'} bg-gray-50 dark:bg-gray-700 rounded-full`}>
+            <div key={activity.id} className="flex items-start gap-2 sm:gap-3 p-2 sm:p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700">
+              <div className={`${isSmall ? 'p-1' : 'p-1.5 sm:p-2'} bg-gray-50 dark:bg-gray-700 rounded-full flex-shrink-0 mt-0.5`}>
                 {(() => {
                   const icon = getActivityIcon(activity.type);
                   return React.cloneElement(icon, {
@@ -152,22 +152,22 @@ export function ActivityList({
                   });
                 })()}
               </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h4 className={`${isSmall ? 'text-sm' : 'text-base'} font-medium capitalize dark:text-gray-200`}>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <h4 className="text-xs sm:text-sm font-medium capitalize dark:text-gray-200 truncate max-w-[40%] sm:max-w-none">
                     {activity.type.replace('_', ' ')}
                   </h4>
-                  <span className={`${isSmall ? 'text-xs' : 'text-sm'} text-gray-500`}>
+                  <span className="text-[10px] sm:text-xs text-gray-500 whitespace-nowrap">
                     {details.units} {getActivityUnit(activity.type)}
                   </span>
-                  <span className={`${isSmall ? 'text-xs' : 'text-sm'} text-gray-500 dark:text-gray-400`}>
+                  <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                     {isSmall 
                       ? new Date(activity.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                       : formatActivityDate(activity.timestamp)
                     }
                   </span>
                 </div>
-                <p className={`${isSmall ? 'text-xs' : 'text-sm'} text-gray-600 dark:text-gray-300`}>
+                <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap">
                   {activity.emissionsKg.toFixed(2)} kg CO₂
                 </p>
               </div>
