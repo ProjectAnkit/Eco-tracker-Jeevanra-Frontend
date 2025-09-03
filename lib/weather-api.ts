@@ -78,7 +78,6 @@ export const fetchWeather = async (location: string): Promise<WeatherData | null
     return await response.json();
   } catch (error) {
     console.error('Error fetching weather data:', error);
-    toastError('Failed to load weather data');
     return null;
   }
 };
