@@ -111,10 +111,10 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
         )}
       </DialogTrigger>
 
-      <DialogContent className="max-w-lg w-[90vw] h-[380px] p-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-md shadow-lg">
-        <div className="flex flex-row h-full">
-          {/* Left - Image */}
-          <div className="hidden md:flex w-1/2 bg-gradient-to-br from-emerald-50 to-cyan-50 dark:from-emerald-900/20 dark:to-teal-900/20 items-center justify-center">
+      <DialogContent className="w-[60vw] sm:w-[90vw] h-auto max-h-[95vh] sm:max-h-[90vh] p-0 overflow-hidden bg-white dark:bg-slate-900 border-0 shadow-2xl" style={{ width: '60vw', maxWidth: '600px' }}>
+        <div className="flex flex-col sm:flex-row h-full w-full">
+          {/* Left - Image - Hidden on mobile */}
+          <div className="hidden sm:flex w-full sm:w-5/12 bg-gradient-to-br from-emerald-50 to-cyan-50 dark:from-emerald-900/20 dark:to-teal-900/20 items-center justify-center">
             <div className="relative w-full h-full flex items-center justify-center">
               <Image
                 src="https://images.unsplash.com/photo-1693414854278-6b3703411629?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -129,19 +129,19 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
           </div>
 
           {/* Right - Form */}
-          <div className="w-full md:w-1/2 px-5 py-6 pb-8 flex flex-col justify-center items-center">
-            <DialogHeader className="pb-3 text-center">
-              <DialogTitle className="text-base font-semibold text-slate-900 dark:text-white mb-0.5">
+          <div className="w-full sm:w-7/12 px-4 sm:px-8 py-8 sm:py-10 flex flex-col justify-center items-center overflow-y-auto">
+            <DialogHeader className="pb-4 text-center">
+              <DialogTitle className="text-xl font-bold text-slate-900 dark:text-white mb-1.5 text-center">
                 {isRegister ? "Create your account" : "Welcome back"}
               </DialogTitle>
-              <p className="text-slate-500 dark:text-slate-400 text-[10px]">
+              <p className="text-slate-500 dark:text-slate-400 text-sm">
                 {isRegister ? "Join our eco community today" : "Sign in to continue to Jeevanra"}
               </p>
             </DialogHeader>
 
             <motion.form
               onSubmit={handleAuth}
-              className="w-full max-w-[240px] space-y-3"
+              className="w-full max-w-xs sm:max-w-md space-y-4 sm:space-y-5"
               variants={containerVariants}
               initial="hidden"
               animate="show"
@@ -156,18 +156,18 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
                 >
                   {isRegister && (
                     <motion.div className="space-y-1" variants={itemVariants}>
-                      <label htmlFor="name" className="text-[8px] font-medium text-slate-700 dark:text-slate-300">
+                      <label htmlFor="name" className="text-xs font-medium text-slate-700 dark:text-slate-300">
                         Full Name
                       </label>
                       <div className="relative">
-                        <User className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-slate-400" />
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                         <Input
                           id="name"
                           type="text"
                           placeholder="John Doe"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="w-full h-7 pl-8 pr-2 rounded-sm text-[10px]"
+                          className="w-full h-10 sm:h-11 pl-10 pr-3 rounded-md text-sm sm:text-base"
                           required={isRegister}
                         />
                       </div>
@@ -175,7 +175,7 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
                   )}
 
                   <div className="space-y-1">
-                    <label htmlFor="email" className="text-[8px] font-medium text-slate-700 dark:text-slate-300">
+                    <label htmlFor="email" className="text-xs font-medium text-slate-700 dark:text-slate-300">
                       Email
                     </label>
                     <div className="relative">
@@ -186,7 +186,7 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
                         placeholder="you@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full h-7 pl-8 pr-2 text-[10px] rounded-sm"
+                        className="w-full h-10 pl-10 pr-3 text-sm rounded-md"
                         required
                       />
                     </div>
@@ -206,7 +206,7 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
                         placeholder={isRegister ? "Create a password" : "Enter your password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full h-7 pl-8 pr-8 rounded-sm text-[10px]"
+                        className="w-full h-10 pl-10 pr-10 rounded-md text-sm"
                         required
                         minLength={isRegister ? 8 : undefined}
                       />
@@ -219,7 +219,7 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
                       </button>
                     </div>
                     {isRegister && (
-                      <p className="text-[8px] text-slate-500 dark:text-slate-400">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                         Use 8+ characters with letters, numbers & symbols
                       </p>
                     )}
@@ -229,11 +229,11 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
                     <Button
                       type="submit"
                       disabled={!email || !password || (isRegister && !name) || loading}
-                      className="w-full h-7 text-[10px] font-medium text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:scale-[1.01] transition-transform rounded-sm"
+                      className="w-full h-11 sm:h-12 text-sm sm:text-base font-medium text-white bg-gradient-to-r from-emerald-500 to-teal-600 hover:scale-[1.02] transition-transform rounded-md"
                     >
                       {loading ? (
                         <>
-                          <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                           {isRegister ? "Creating..." : "Signing in..."}
                         </>
                       ) : isRegister ? (
@@ -250,7 +250,7 @@ export default function AuthForm({ children, defaultTab = "login" }: AuthFormPro
                 <button
                   type="button"
                   onClick={toggleAuthMode}
-                  className="font-medium text-emerald-600 hover:underline dark:text-emerald-400"
+                  className="text-xs sm:text-sm font-medium text-emerald-600 hover:underline dark:text-emerald-400"
                   disabled={loading}
                 >
                   {isRegister ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
