@@ -53,16 +53,12 @@ export function CreateChallengeDialog({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name.trim() || !goal.trim()) {
+    if (!name.trim()) {
       toast.error('Please fill in all fields');
       return;
     }
 
-    const goalValue = goal.trim() === '' ? 0 : parseFloat(goal);
-    if (isNaN(goalValue) || goalValue <= 0) {
-      toast.error('Please enter a valid goal amount');
-      return;
-    }
+    const goalValue = 0;
 
     try {
       setIsSubmitting(true);
