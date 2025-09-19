@@ -163,16 +163,24 @@ export default function Dashboard() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+        <Card className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 relative overflow-hidden">
+          <div className="absolute top-0 right-0 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-200 text-xs font-medium px-2 py-1 rounded-bl-lg">
+            Coming Soon
+          </div>
           <CardContent className="p-6">
             <div className="flex items-center gap-3 mb-3">
-              <div className="p-2 rounded-full bg-emerald-50 dark:bg-emerald-900/30">
-                <Leaf className="h-5 w-5 text-emerald-600" />
+              <div className="p-2 rounded-full bg-amber-50 dark:bg-amber-900/30">
+                <svg className="h-5 w-5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
               </div>
-              <div className="text-sm font-medium text-muted-foreground">Points</div>
+              <div className="text-sm font-medium text-muted-foreground">Points System</div>
             </div>
-            <div className="text-2xl font-bold text-slate-900 dark:text-white">{profile?.points || 0}</div>
-            <div className="text-sm text-muted-foreground mt-1">Total points</div>
+            <div className="text-2xl font-bold text-slate-900 dark:text-white mb-2">In Development</div>
+            <div className="text-sm text-muted-foreground">New points system coming soon</div>
+            <div className="mt-3 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1.5 rounded-md">
+              <span className="font-medium">Note:</span> We're working on an enhanced points system to make your experience even better!
+            </div>
           </CardContent>
         </Card>
 

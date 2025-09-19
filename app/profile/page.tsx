@@ -207,19 +207,18 @@ export default function Profile() {
                     <span className="truncate max-w-[180px]">{session.user?.email}</span>
                   </div>
 
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 gap-2 w-full pt-1.5">
-                    <div className="text-center p-2 bg-slate-50/80 dark:bg-slate-800/50 rounded-md border border-slate-200/70 dark:border-slate-700/50">
-                      <div className="text-[13px] font-medium text-emerald-600 dark:text-emerald-400">
-                        {profile?.points || 0}
+                  {/* Stats - In Development */}
+                  <div className="w-full pt-1.5">
+                    <div className="relative p-2.5 bg-amber-50/80 dark:bg-amber-900/20 rounded-lg border border-amber-200/80 dark:border-amber-800/50">
+                      <div className="flex items-center justify-center">
+                        <svg className="h-4 w-4 text-amber-500 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="text-xs font-medium text-amber-700 dark:text-amber-400">Points System In Development</span>
                       </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Points</div>
-                    </div>
-                    <div className="text-center p-2 bg-slate-50/80 dark:bg-slate-800/50 rounded-md border border-slate-200/70 dark:border-slate-700/50">
-                      <div className="text-[13px] font-medium text-cyan-600 dark:text-cyan-400">
-                        {profile?.co2Saved?.toFixed(1) || "0.0"}
-                      </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">CO₂ Saved</div>
+                      <p className="text-[11px] text-amber-600/80 dark:text-amber-400/80 mt-1 text-center">
+                        New features coming soon!
+                      </p>
                     </div>
                   </div>
 

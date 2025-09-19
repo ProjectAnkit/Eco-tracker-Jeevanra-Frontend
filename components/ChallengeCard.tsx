@@ -74,8 +74,8 @@ export function ChallengeCard({ challenge, onUpdate }: ChallengeCardProps) {
               <BarChart className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
             </div>
             <div className="truncate">
-              <span className="text-[11px] text-slate-500 dark:text-slate-400">Target</span>
-              <span className="ml-1 font-medium">{challenge.goal} kg CO₂</span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400">Points Bucket :</span>
+              <span className="ml-1 font-medium text-yellow-500">In-Development</span>
             </div>
           </div>
           <div className="flex items-center text-[13px] text-slate-700 dark:text-slate-300">

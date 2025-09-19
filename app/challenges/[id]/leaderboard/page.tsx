@@ -295,9 +295,6 @@ export default function LeaderboardPage() {
                         <div className="font-semibold text-slate-900 dark:text-white">
                           {participant.co2Saved.toFixed(1)} <span className="text-slate-500 dark:text-slate-400 text-sm font-normal">kg CO₂</span>
                         </div>
-                        <div className="text-sm text-slate-500 dark:text-slate-400">
-                          {participant.points || 0} points
-                        </div>
                       </div>
                     </div>
                   );
