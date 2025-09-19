@@ -1,8 +1,3 @@
-import { toastError } from "./toast";
-
-const WEATHER_KEY = process.env.NEXT_PUBLIC_WEATHER_API_KEY || '';
-const WEATHER_API_URL = 'https://api.weatherapi.com/v1/current.json';
-
 export interface WeatherData {
   location: {
     name: string;
@@ -68,7 +63,7 @@ export const fetchWeather = async (location: string): Promise<WeatherData | null
   try {
     const query = `q=${location}`;
     const response = await fetch(
-      `${WEATHER_API_URL}?key=${WEATHER_KEY}&${query}&aqi=no`
+      `https://api.weatherapi.com/v1/current.json?key=${process.env.NEXT_PUBLIC_WEATHER_API_KEY}&${query}&aqi=no`
     );
     
     if (!response.ok) {

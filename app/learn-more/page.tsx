@@ -1,9 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Leaf, Bike, Utensils, Zap, Clock, ArrowRight } from "lucide-react";
+import { Leaf, Bike, Utensils, Zap, Clock } from "lucide-react";
 import AuthForm from "@/components/authForm";
 
 const blogPosts = [

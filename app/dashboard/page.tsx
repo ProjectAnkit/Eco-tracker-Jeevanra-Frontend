@@ -5,12 +5,11 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { useSession } from "next-auth/react";
-import { TrendingDown, Leaf, Target, Award } from "lucide-react";
+import { TrendingDown, Target, Award } from "lucide-react";
 import { getChallenges, getUserRanking } from "@/lib/challenge-api";
 import Protected from "@/components/Protected";
 import RecentActivities from "@/components/RecentActivities";
 import WeatherSuggestion from "@/components/WeatherSuggestion";
-import { toastError } from "@/lib/toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.API_URL;
 
@@ -179,7 +178,7 @@ export default function Dashboard() {
             <div className="text-2xl font-bold text-slate-900 dark:text-white mb-2">In Development</div>
             <div className="text-sm text-muted-foreground">New points system coming soon</div>
             <div className="mt-3 text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-2 py-1.5 rounded-md">
-              <span className="font-medium">Note:</span> We're working on an enhanced points system to make your experience even better!
+              <span className="font-medium">Note:</span> We are working on an enhanced points system to make your experience even better!
             </div>
           </CardContent>
         </Card>

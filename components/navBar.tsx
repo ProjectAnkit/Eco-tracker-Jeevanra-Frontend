@@ -15,6 +15,7 @@ import AuthForm from "./authForm";
 
 export default function Navbar() {
   const { data: session } = useSession();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
