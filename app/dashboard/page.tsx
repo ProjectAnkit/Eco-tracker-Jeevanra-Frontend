@@ -65,7 +65,6 @@ export default function Dashboard() {
           }
         } catch (error) {
             console.error("Error getting user rank:", error);
-            toastError("Failed to get user rank");
         }
       }
       return null;
