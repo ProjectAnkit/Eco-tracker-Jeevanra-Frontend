@@ -155,7 +155,7 @@ export default function LeaderboardPage() {
               {/* Top 3 Podium */}
               {leaderboard.length >= 3 && (
                 <div className="grid grid-cols-3 gap-4 mb-8">
-                  {[1, 0, 2].map((podiumIndex) => {
+                  {[0, 1, 2].map((podiumIndex) => {
                     if (podiumIndex >= leaderboard.length) return null;
                     const participant = leaderboard[podiumIndex];
                     const isCurrentUser = participant.email === session?.user?.email;
